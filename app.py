@@ -1,24 +1,34 @@
 ### Integrate html
-from flask import redirect, url_for, Flask
+from flask import Flask, render_template, Response
+import cv2
 
-app = Flask(__name__)
+app=Flask(__name__)
+camera = cv2.VideoCapture(0)
 
-@app.route("/")
-def hello():
-    return "Hello, World"
+def generate_frames():
+    # Read frames from camera
+    success, frame = camera.read()
+    while True:
+            
+        ## read the camera frame
+        success,frame=camera.read()
+        if not success:
+            break
+        else:
+            ret,buffer=cv2.imencode('.jpg',frame)
+            frame=buffer.tobytes()
 
-@app.route("/result/<int:score>")
-def result(score):
-    result = "success" if score > 60 else "failure"
-    return redirect(url_for(result, score=score))
+        yield(b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
-@app.route("/success/<int:score>")
-def success(score):
-    return f"The person passed with {score} score!"
+@app.route('/')
+def index():
+    return render_template("index.html")
 
-@app.route("/failure/<int:score>")
-def failure(score):
-    return f"The person failed with {score} score!"
+@app.route("/video")
+def video():
+    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     app.run(debug=True)

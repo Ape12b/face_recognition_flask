@@ -19,9 +19,8 @@ def hello():
 
 @app.route("/result/<int:score>")
 def passed(score):
-    res = "pass" if score > 50 else "fail"
-    result = {"score": score, "res": res}
-    return render_template("result.html", result = result)
+    res = "passed" if score > 50 else "fail"
+    return render_template("result.html", results=res, score = score)
 
 ### Result checker HTML page
 @app.route('/submit', methods=['GET', 'POST'])
@@ -35,14 +34,6 @@ def submit():
         
     res = "passed"
     return redirect(url_for(res, score=total_score))
-    
-    
-
-
-
-    
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)
