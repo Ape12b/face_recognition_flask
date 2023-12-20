@@ -1,27 +1,24 @@
-### Building Url-Dynamically.
-### Variable Rules And URL Building
-
-from flask import Flask, redirect, url_for
+### Integrate html
+from flask import redirect, url_for, Flask
 
 app = Flask(__name__)
 
-
-@app.route('/')
+@app.route("/")
 def hello():
-    return "Hello, world!"
+    return "Hello, World"
 
 @app.route("/result/<int:score>")
 def result(score):
-    status = "success" if score > 60 else "fail"
-    return redirect(url_for(status, score=score))
+    result = "success" if score > 60 else "failure"
+    return redirect(url_for(result, score=score))
 
-@app.route("/pass/<int:score>")
+@app.route("/success/<int:score>")
 def success(score):
-    return "The person has passed!"
+    return f"The person passed with {score} score!"
 
-@app.route("/fail/<int:score>")
-def fail(score):
-    return "The person has failed"
-    
+@app.route("/failure/<int:score>")
+def failure(score):
+    return f"The person failed with {score} score!"
+
 if __name__ == "__main__":
     app.run(debug=True)
